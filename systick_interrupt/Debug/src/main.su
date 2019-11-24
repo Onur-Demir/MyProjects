@@ -1,0 +1,7 @@
+core_cm0plus.h:804:22:NVIC_SetPriority	24	static
+core_cm0plus.h:885:26:SysTick_Config	16	static
+main.c:12:6:SysTick_Handler	8	static
+main.c:29:6:delay	16	static
+main.c:40:6:gpio_config	8	static
+main.c:66:6:clock_config	8	static
+main.c:119:5:main	8	static

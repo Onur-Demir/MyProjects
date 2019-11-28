@@ -1,0 +1,5 @@
+This is a subset of the repo STM32Cube_FW_L0, since STM32Cube_FW_L0 is too large to have in all projects.
+The master branch in this repo must be kept clean, it shall _NOT_ be updated with Tele-Radio specific stuff
+if it is, I (haen) will remove them without further notivce !
+If we do any Tele-Radio specific changes in this repo, it shall be done in a separate branch.
+

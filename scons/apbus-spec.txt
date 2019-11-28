@@ -1,0 +1,27 @@
+APBUS - internal bus.
+
+Default baudrate: 115200 kbaud. Fall-back to 9600 kbaud.
+
+Format: <pre-amble> <1B dst> <2B cmd> <2B length> <"length" bytes payload> <CS/CRC>
+
+dst:
+    0: PC/Master
+    1-99: Node/CPU 1..99
+    253: special msg (for instance init cmd)
+    254: broadcast
+    255: invalid
+
+cmd:
+    0x0000..0x00FF : protocol cmds
+    0x0100..0x01FF : raw memory cmds (read/write raw memory etc)
+    0x8000..0xFEFE : user/product specific cmds
+
+states:
+    a CPU can be in a few different states, partly controlled by the APBUS:
+    0 : bootloader0 - in flash bootloader
+    1 : bootloader1 - in ram bootloader
+    2 : init - normal operation, but not finished initializing
+    3 : normal - normal operation
+    4 : config mode / read only - halted, not operation. Only read is allowed though.
+    5 : config mode / rw - halted, not operation. read and write is allowed.
+

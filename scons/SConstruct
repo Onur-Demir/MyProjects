@@ -35,14 +35,16 @@ def getEnv():
         "AR"    : "arm-none-eabi-ar",
 		"AS"    : "arm-none-eabi-as",
         "STRIP" : "arm-none-eabi-strip",
-        "PROGSUFFIX" : ".elf",
+        "PROGSUFFIX" : ".hex",                  #.elf
         #"VERBOSE" : True,
+        
+        
 
         "CPPPATH" : [
 						 ".",
-						
 						"STM32_CMSIS\Device\ST\STM32L0xx\Include",
                         "STM32_CMSIS\Include",
+                        
 						
 
                     ],
@@ -51,6 +53,8 @@ def getEnv():
                         "-std=gnu90",
                         "-xc",      # "C" language
                     ],
+
+        
 
         "CXXFLAGS" : [
                     #    "-std=gnu90",
@@ -92,7 +96,7 @@ def getEnv():
                     ],
 
         "LIBS" :    [
-                         "c_nano",   # minimal libc
+                        #"c_nano",   # minimal libc
                         # "nosys",    # satisfy _exit() call etc.
                     ],
 					

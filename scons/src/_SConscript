@@ -2,11 +2,11 @@ Import("env")
 
 
 srcs  = [
-
     
-	"startup_stm32l053xx.s",
-    "system_stm32l0xx.c",
     "main.c",
+
+	
+    
 	
 ]
 

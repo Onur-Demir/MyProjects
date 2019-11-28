@@ -1,6 +1,10 @@
 //include <stddef.h>
+
+
+
+#include "_platform.h"
+
 #include "stm32l0xx.h"
-#include "stm32l053xx.h"
 
 uint32_t i=0;
 

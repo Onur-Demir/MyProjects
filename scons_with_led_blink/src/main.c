@@ -2,9 +2,9 @@
 
 
 
+#include "stm32l0xx.h"
 #include "_platform.h"
 
-#include "stm32l0xx.h"
 
 uint32_t i=0;
 
@@ -98,7 +98,7 @@ int main(void)
 	{
 
 		GPIOA->ODR ^= (1<<5);
-		for(i=0;i <=100000;i++);
+		for(i=0;i <=1000000;i++);
 
 
 	}

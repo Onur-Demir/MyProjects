@@ -1,0 +1,7 @@
+This project include 3000Hz output pwm signal.
+
+-Pwm pin_B13
+-Timer21
+-Channel1
+-Duty=%50
+

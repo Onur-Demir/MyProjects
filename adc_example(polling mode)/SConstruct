@@ -1,0 +1,134 @@
+import os
+import sys
+
+
+if sys.version_info < (3,5,0):
+    raise Exception("Wrong python version", sys.version_info)
+
+CLOCK_SPEED        = 32000000
+CPU                = "STM32L053R8"
+CPU_ARCH           = "cortex-m0plus"
+
+STACK_SIZE         = "0x200"
+STACK_PATTERN      = "0x65657266"
+
+BOOT_PERSISTENT_DATA_SIZE = 16
+PRIVILEGED_TEXT_SIZE = 0
+PRIVILEGED_DATA_SIZE = 0
+
+#DefaultEnvironment(tools = [])      # silence warnings about MSVC on Windows
+
+
+def getEnv():
+    #CCFLAGS - used for both C and C++
+    #CFLAGS - only C
+    #CXXFLAGS - only CPP
+	
+	
+	
+
+    env_options = {
+        "tools" : ["mingw"],        # mingw works, but not gcc/gxx/cxx. TODO: Check Linux!
+        "CC"    : "arm-none-eabi-gcc",
+        "CXX"   : "arm-none-eabi-g++",
+        "LD"    : "arm-none-eabi-g++",
+        "AR"    : "arm-none-eabi-ar",
+		"AS"    : "arm-none-eabi-as",
+        "STRIP" : "arm-none-eabi-strip",
+        "PROGSUFFIX" : ".elf",                  #.hex
+        "VERBOSE" : True,
+        
+        
+
+        "CPPPATH" : [
+						 ".",
+						"STM32_CMSIS\Device\ST\STM32L0xx\Include",
+                        "STM32_CMSIS\Include",
+                        
+						
+
+                    ],
+
+        "CPPDEFINES" :  [
+                            "STM32L053xx",
+        ],
+
+        "CFLAGS" : [
+                        "-std=gnu90",
+                        "-xc",      # "C" language
+                    ],
+
+        
+
+        "CXXFLAGS" : [
+                    #    "-std=gnu90",
+                        "-xcpp",    # "CPP" language
+                    ],
+
+        "CCFLAGS" : [
+                        "-g",                   # Produce debugging information in the operating system’s native format
+                      # "-Os",                  # optimize for size
+                        "-mthumb",              # use thumb instruction set
+                        "-ffunction-sections",  # Place each function item into its own section in the output file if the target supports arbitrary sections.
+                        "-fdata-sections",      # Place each data item into its own section in the output file if the target supports arbitrary sections.
+                        "-Wall",                # warning for all
+                        "-Wextra",              # and extra warnings...
+                        "-Wa,-a,-adl=${TARGET.base}.lst",   # GCC: Generate list files with ASM
+                        #"-nostdinc",            # Do not search the standard system directories for header files. Only the directories explicitly specified with -I, -iquote, -isystem, and/or -idirafter options (and the directory of the current file, if appropriate) are searched.
+                        "-Wpointer-arith",      # warning for dubious ptrs arithmetics
+                        # "-target armv7m-none-eabi",    # for clang!
+
+                        "-mcpu=cortex-m0plus",
+                    ],
+
+        "LINKFLAGS" : [
+                        "-Wl,-no-keep-memory",
+                        "-mthumb",
+                        # "-Wl,--start-group",
+                        # "-Wl,--end-group",
+                        # "-static",
+                        "-Wl,-cref",                # Output a cross reference table. If a linker map file is being generated, the cross reference table is printed to the map file
+                        # "-Wl,-u,Reset_Handler",     # undefine symbol Reset_Handler
+                        # "-Wl,--gc-sections",
+                        # "-Wl,--defsym=malloc_getpagesize_P=0x1000",
+                        "-Wl,--Map=${TARGET.base}.map,--cref",
+                        "-mcpu=cortex-m0plus",
+                        "-Tstm32_flash.ld",
+                       # "-nostartfiles",        # Do not use the standard system startup files when linking. The standard system libraries are used normally, unless -nostdlib or -nodefaultlibs is used.
+                       #"-nodefaultlibs",       # Do not use the standard system libraries when linking. Only the libraries you specify are passed to the linker, and options specifying linkage of the system libraries
+                       #"-nostdlib",            # Do not use the standard system startup files or libraries when linking. No startup files and only the libraries you specify are passed to the linker,
+                    ],
+
+        "LIBS" :    [
+                        "gcc",
+                        "c_nano",   # minimal libc
+                        "nosys",    # satisfy _exit() call etc.
+                    ],
+					
+        
+
+
+
+
+    }
+	
+	
+	
+    gccPath = os.path.abspath("c:/Program Files (x86)/GNU Tools ARM Embedded/8 2018-q4-major")
+
+
+    env = Environment(**env_options)
+    env.Append(ENV = {'PATH' : gccPath + "/bin"})
+
+    return env
+
+env = getEnv()
+
+# print(env.Dump())
+
+env.SConscript(
+    "src/_SConscript",
+    variant_dir = "build",      # where to build
+    exports = "env",            # export to sconscript
+    )
+

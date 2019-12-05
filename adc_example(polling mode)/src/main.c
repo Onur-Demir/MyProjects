@@ -77,23 +77,34 @@ void adc_config(void)
 
 	ADC->CCR |= ADC_CCR_VREFEN;									      //Vref enable
 
-	ADC1->CFGR1 |= ADC_CFGR1_WAIT ; 
+	ADC1->CFGR1 |= ADC_CFGR1_WAIT ; 								  //Wait conversion mode
 
-	ADC1->CFGR1 |= ADC_CFGR1_CONT;
+	ADC1->CFGR1 |= ADC_CFGR1_CONT;									  //select continuous conversion mode 
 
-	ADC1->CFGR1 |= ADC_CFGR1_SCANDIR;
-
-
-	ADC1->CHSELR |= ADC_CHSELR_CHSEL4;
-
-    ADC1->SMPR |= ADC_SMPR_SMP_0 | ADC_SMPR_SMP_1 | ADC_SMPR_SMP_2;   //Select a sampling mode of 111 for 160.5 ADC clock cycles
-			   
+	ADC1->CFGR1 |= ADC_CFGR1_SCANDIR;                                 //Scan sequence direction (optional)-check it
 
 
+	ADC1->CHSELR |= ADC_CHSELR_CHSEL4;                                //channel 4 selected
+
+    ADC1->SMPR |= ADC_SMPR_SMP_0 | ADC_SMPR_SMP_1 | ADC_SMPR_SMP_2;   //160.5 clock cycle sampling time	
 
 }
 
+void calibrate_config(void)
+{
+	if((ADC1->CR & ADC_CR_ADEN ) !=0)                      //Check adc enable    
+		{
+			ADC1->CR &= ~ADC_CR_ADEN;                      //Clear adc enable
 
+		}
+
+	ADC1->CR |=ADC_CR_ADCAL ;                               //Calibrate adc
+
+	while((ADC1->ISR & ADC_ISR_EOCAL) ==0) ;                //Wait until adc calibrate
+
+	ADC1->ISR |= ADC_ISR_EOCAL ;							   //End of calibrate flag clean
+
+}
 
 
 
@@ -104,20 +115,22 @@ int main(void)
 	clock_config();
 	gpio_config();
 	adc_config();
-	
+	calibrate_config();
 	
 	while(1)
 	{
 
-		ADC1-> CR |= ADC_CR_ADSTART;
+		
+        ADC1-> CR |= ADC_CR_ADSTART;                                   //Start ADC conversion.
+		
+		while((ADC1->ISR & ADC_ISR_EOC) ==0);						   //Wait until end of conversion
+		
+		adc_value=ADC1->DR;											   //Read value
+		
 
+		for(i=0;i<1000000;i++);
+	    //ADC1->ISR |= ADC_ISR_EOC;									   //clear flag register check it
 		
-		while((ADC1->ISR & ADC_ISR_EOC) ==0);
-		
-		ADC1->ISR |= ADC_ISR_EOC;
-		
-	    adc_value=ADC1->DR;
-			
 
 
 	}

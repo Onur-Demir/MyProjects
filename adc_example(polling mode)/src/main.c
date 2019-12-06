@@ -92,30 +92,65 @@ void adc_config(void)
 
 void calibrate_config(void)
 {
-	if((ADC1->CR & ADC_CR_ADEN ) !=0)                      //Check adc enable    
-		{
-			ADC1->CR &= ~ADC_CR_ADEN;                      //Clear adc enable
 
-		}
 
-	ADC1->CR |=ADC_CR_ADCAL ;                               //Calibrate adc
+  if ((ADC1->CR & ADC_CR_ADEN) != 0)                                 //Check adc enable?
+{
+    ADC1->CR &= ~ADC_CR_ADEN;   									   //Set adc disable
+  }
+  ADC1->CR |= ADC_CR_ADCAL;                                            //Adc calibrate     
+                                
+  while ((ADC1->ISR & ADC_ISR_EOCAL) == 0);                            //Wait until end of calibration
+ 
+  ADC1->ISR |= ADC_ISR_EOCAL;                                          //Clean EOC flag
 
-	while((ADC1->ISR & ADC_ISR_EOCAL) ==0) ;                //Wait until adc calibrate
-
-	ADC1->ISR |= ADC_ISR_EOCAL ;							   //End of calibrate flag clean
 
 }
 
 
+void adc_enable(void)
+{
 
+  ADC1->CR |= ADC_CR_ADEN;                                       // Enable the ADC
+  
+  while ((ADC1->ISR & ADC_ISR_ADRDY) == 0);                      //Wait until adc is ready
+   
+
+
+}
+
+
+void adc_disable(void)
+{
+	if ((ADC1->CR & ADC_CR_ADSTART) != 0)                          //Check adc start status
+  {
+    ADC1->CR |= ADC_CR_ADSTP; 									   //Set adc status
+  }
+  while ((ADC1->CR & ADC_CR_ADSTP) != 0) ;                         //Wait until adc stop
+  
+  ADC1->CR |= ADC_CR_ADDIS;                                        //Adc set disable
+
+  while ((ADC1->CR & ADC_CR_ADEN) != 0);                           //Wait until Adc enable
+   
+
+
+}
+/**************************************Calibrate note****************************************************
+* Note: The software is allowed to set ADCAL only when the ADC is disabled (ADCAL=0, ADSTART=0,          *
+* ADSTP=0, ADDIS=0 and ADEN=0).                                                                           *																										*
+*********************************************************************************************************/
 
 int main(void)
 {
-	
-	clock_config();
 	gpio_config();
+	clock_config();
 	adc_config();
+
+	adc_disable();
 	calibrate_config();
+	adc_enable();
+	
+	
 	
 	while(1)
 	{
@@ -129,7 +164,7 @@ int main(void)
 		
 
 		for(i=0;i<1000000;i++);
-	    //ADC1->ISR |= ADC_ISR_EOC;									   //clear flag register check it
+	    ADC1->ISR |= ADC_ISR_EOC;									   //clear EOC flag 
 		
 
 

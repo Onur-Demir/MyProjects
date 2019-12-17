@@ -1,0 +1,10 @@
+*.c         eol=lf
+*.h         eol=lf
+*.txt       eol=lf
+*.s         eol=lf
+*.asm       eol=lf
+*.ld        eol=lf
+*.py        eol=lf
+_SConscript eol=lf
+SConstruct  eol=lf
+

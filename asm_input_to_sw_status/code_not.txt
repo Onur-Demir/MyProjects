@@ -1,0 +1,2 @@
+This code include stop switch input(pin_A5) status read and 
+status send cpu2(pin_A1) to cpu1().
